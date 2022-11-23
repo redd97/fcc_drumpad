@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // import styled from 'styled-components';
 
 const buttonAudioSamples = [
@@ -50,32 +50,24 @@ const buttonAudioSamples = [
   }
 ]
 
-// const DrumPadStyled = styled.div`
-//   border: 1px solid #000;
-// `
 
-const DrumPad = ({ data, play }) => {
-  const audioRef = createRef();
-  const padActivate = () => {
-    play(audioRef);
-  }
+const DrumPad = ({ data, play, pressedKey }) => {
 
-  const keyHandler = ({ key }) => {
-    console.log("key: ", key);
-    if (key === data.key) {
-      play(audioRef)
-    }
+  const audioRef = useRef(null)
+  let isActive = false;
+  if (('Key' + data.key) === pressedKey) {
+    isActive = true;
+    play(audioRef)
   }
-  // useEffect( () => {
-  //   window.addEventListener("keydown", keyHandler);
-  //   return () =>{
-  //     window.removeEventListener('keydown', keyHandler);
-  //   }
-  // }, []);
 
   return (
-    <div className="drum-pad" onClick={padActivate} onKeyPress={keyHandler}>
-      <audio id={data.name} src={data.src} className='clip' ref={audioRef} />
+    <div
+      tabIndex="0"
+      id={data.key}
+      className={`drum-pad ${isActive && 'active'}`}
+      onClick={() => play(audioRef)}
+    >
+      <audio id={data.key} data-name={data.name} src={data.src} className='clip' ref={audioRef} />
       {data.key}
     </div>
   )
@@ -83,38 +75,66 @@ const DrumPad = ({ data, play }) => {
 
 
 
-const DrumPadsBlock = (props) =>
-  <div className='machine-pads'>
-    {props.data.map(item => <DrumPad key={item.key} data={item} play={(ref) => props.play(ref)} />)}
-  </div>;
-
+const DrumPadsBlock = (props) => {
+  return (
+    <div className='machine-pads'>
+      {props.data.map(item =>
+        <DrumPad
+          key={item.key}
+          pressedKey={props.pressedKey}
+          data={item}
+          play={(ref) => props.play(ref)}
+        />)}
+    </div>
+  )
+}
 
 
 export default function DrumMachine() {
   const [power, setPower] = useState(true);
   const [volume, setVolume] = useState(50);
+  const [display, setDisplay] = useState("");
+
+  const [key, setKey] = useState(null);
+
+  const keyHandler = (event) => {
+    setKey(event.code)
+    setTimeout(() => {
+      setKey(null);
+    }, 200)
+
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener('keydown', keyHandler);
+    }
+  }, []);
 
 
 
   function playSound(ref) {
+    const sound = ref.current;
     if (power) {
-      ref.current.volume = volume / 100
-      ref.current.play()
+      sound.volume = volume / 100;
+      sound.play();
+      setDisplay(sound.dataset.name)
     }
-    console.log(ref)
   }
-
 
 
   return (
     <div id='drum-machine'>
-      <DrumPadsBlock data={buttonAudioSamples} play={(ref) => playSound(ref)} />
-
+      <DrumPadsBlock data={buttonAudioSamples} pressedKey={key} play={(ref) => playSound(ref)} />
       <div className="machine-controls">
         <div>Power Switch
           <input type="checkbox" name="power" checked={power} onChange={e => setPower(!power)} />
         </div>
-        <div id='display'>Display</div>
+        <div clsssName='display-wrapper'>
+          Display
+          <div id='display'>{display}</div>
+        </div>
         <div>
           Volume - {volume}%
           <input type="range" id="volume" name="volume"

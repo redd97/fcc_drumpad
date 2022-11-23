@@ -1,50 +1,60 @@
-body{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-*, ::after, ::before {
-    box-sizing: inherit;
+
+*,
+::after,
+::before {
+  box-sizing: inherit;
 }
 
 
 #root {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: radial-gradient(#323859, #1A1826);
-  }
-  
-  #drum-machine {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    border: 2px solid orange;
-    background: white;
-    padding: 20px;
-  }
-  
-  .machine-pads {
-    display: grid;
-    grid-template-columns: repeat(3, 100px);
-    grid-template-rows: repeat(3, 100px);
-    gap: 10px;
-  }
-  .machine-pads .drum-pad {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #000;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 3px 3px 10px -5px black;
-    font-size: 30px;
-    font-family: tahoma;
-  }
-  
-  .machine-controls {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: radial-gradient(#323859, #1A1826);
+}
+
+#drum-machine {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  border: 2px solid orange;
+  background: white;
+  padding: 20px;
+}
+
+.machine-pads {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+}
+
+.machine-pads .drum-pad {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #000;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 3px 3px 10px -5px black;
+  font-size: 30px;
+  font-family: tahoma;
+}
+
+.drum-pad.active,
+.drum-pad:hover,
+.drum-pad:active {
+  background-color: rgba(110, 6, 6, 0.3);
+}
+
+.machine-controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
